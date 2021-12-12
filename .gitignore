@@ -1,3 +1,6 @@
 *.xlsx
 .idea/
+*.json
+keno2test.py
+excel_keno.py
 
