@@ -25,8 +25,10 @@ def get_content():
     try:
         # date_range = pd.date_range(start='02.10.2012', end='02.12.2012', freq='D')
         # вводим период в формате (год, месяц, день)
-        date_range = pd.date_range(start=datetime(2020, 6, 24), end=datetime(2020, 6, 25), freq='D')
+
         date_range = pd.date_range(start=datetime(2011, 10, 5), end=datetime(2015, 8, 1), freq='D')
+        date_range = pd.date_range(start=datetime(2015, 8, 1), end=datetime(2021, 9, 28), freq='D')
+        # date_range = pd.date_range(start=datetime(2015, 8, 1), end=datetime(2015, 8, 1), freq='D')
 
         start = datetime.strftime(date_range[0], '%d.%m.%Y')
         stop = datetime.strftime(date_range[-1], '%d.%m.%Y')
@@ -60,54 +62,53 @@ def get_content():
             page_html = browser.page_source
             soup = BeautifulSoup(page_html, 'html.parser')
             elements = soup.find('div', class_='data drawings_data').find_all('div', class_='elem')
-            # print(f'Если тут:{len(elements)} равно 50, то не верно')
+            print(f'За день проведено: {len(elements)} тиражей.')
             for element in elements:
                 data.append({
                     'Дата': element.find('div', class_='draw_date').text.split(' ')[0],
                     'Время': element.find('div', class_='draw_date').text.split(' ')[-1],
-                    'Тираж': element.find('div', class_='draw').find('a').text,
-                    'Число 1': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[1],
-                    'Число 2': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[2],
-                    'Число 3': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[3],
-                    'Число 4': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[4],
-                    'Число 5': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[5],
-                    'Число 6': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[6],
-                    'Число 7': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[7],
-                    'Число 8': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[8],
-                    'Число 9': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[9],
-                    'Число 10': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[10],
-                    'Число 11': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[11],
-                    'Число 12': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[12],
-                    'Число 13': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[13],
-                    'Число 14': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[14],
-                    'Число 15': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[15],
-                    'Число 16': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[16],
-                    'Число 17': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[17],
-                    'Число 18': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[18],
-                    'Число 19': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[19],
-                    'Число 20': element.find('div', class_='container cleared').find('span', class_='zone').text.replace(
-                        '\xa0', '').replace('\n', ' ').split(' ')[20],
-                    'Выигрыш': element.find('div', class_='prize').get_text(strip=True).replace('\xa0', ''),
-
+                    'Тираж': int(element.find('div', class_='draw').find('a').text),
+                    'Выплата': element.find('div', class_='prize').get_text(strip=True).replace('\xa0', ''),
+                    'Число 1': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[1]),
+                    'Число 2': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[2]),
+                    'Число 3': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[3]),
+                    'Число 4': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[4]),
+                    'Число 5': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[5]),
+                    'Число 6': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[6]),
+                    'Число 7': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[7]),
+                    'Число 8': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[8]),
+                    'Число 9': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[9]),
+                    'Число 10': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[10]),
+                    'Число 11': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[11]),
+                    'Число 12': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[12]),
+                    'Число 13': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[13]),
+                    'Число 14': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[14]),
+                    'Число 15': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[15]),
+                    'Число 16': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[16]),
+                    'Число 17': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[17]),
+                    'Число 18': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[18]),
+                    'Число 19': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[19]),
+                    'Число 20': int(element.find('div', class_='container cleared sorted').find('span', class_='zone').text.replace(
+                        '\xa0', '').replace('\n', ' ').split(' ')[20]),
                 })
 
             print(f'Собранно данных с {len(data)} тиражей')
@@ -118,7 +119,8 @@ def get_content():
         # запись в эксель
         dataframe = pd.DataFrame(data)
         writer = ExcelWriter(f"Результат игр за {start}-{stop}.xlsx")
-        dataframe.to_excel(writer, 'data', index=False)
+        sort_df = dataframe.sort_values(by='Тираж')
+        sort_df.to_excel(writer, 'data', index=False)
         writer.save()
         print(f'Итоговый файл: "Результат игр за {start}-{stop}.xlsx"')
 

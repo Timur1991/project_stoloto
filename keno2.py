@@ -2,13 +2,14 @@ import requests
 import pandas as pd
 import time
 from pandas import ExcelWriter
+from datetime import datetime
 
 url = "https://www.stoloto.ru/p/api/mobile/api/v34/service/draws/archive"
 
 # дата в формате месяц/день/год
-date_range = pd.period_range(start="9/29/2021", end="12/6/2021", freq="D")
+# date_range = pd.period_range(start="9/29/2021", end="12/6/2021", freq="D")
 # date_range = pd.period_range("10/15/2021", "11/11/2021", freq="D")
-date_range = pd.period_range(start="9/13/2021", end="10/26/2021", freq="D")
+date_range = pd.period_range(start="18/12/2021", end="18/12/2021", freq="D")
 data = []
 for date in date_range:
     print(f'Сбор данных на {date}...')
@@ -32,38 +33,71 @@ for date in date_range:
     response = requests.request("GET", url, headers=headers, params=querystring)
     datas_json = response.json()
     for json_data in datas_json["draws"]:
+        # находим дату тиража
+
+        date = datetime.strptime(json_data["date"].split('T')[0], '%Y-%m-%d')
+        # print(json_data["date"])
+
+        # находим выпавшие числа тиража и сортируем их по возрастанию
+        numbers = json_data["winningCombination"][9:29]
+        numbers.sort()
+        # сбор всех данных
         data.append({
-            'Тираж': json_data["number"],
-            'Дата': json_data["date"].split('T')[0],
+            'Дата': datetime.strftime(date, '%d.%m.%Y'),
             'Время': json_data["date"].split('T')[-1].split('+')[0],
+            'Тираж': json_data["number"],
             'Выплата': json_data["summPayed"],
-            '1': json_data["winningCombination"][9],
-            '2': json_data["winningCombination"][10],
-            '3': json_data["winningCombination"][11],
-            '4': json_data["winningCombination"][12],
-            '5': json_data["winningCombination"][13],
-            '6': json_data["winningCombination"][14],
-            '7': json_data["winningCombination"][15],
-            '8': json_data["winningCombination"][16],
-            '9': json_data["winningCombination"][17],
-            '10': json_data["winningCombination"][18],
-            '11': json_data["winningCombination"][19],
-            '12': json_data["winningCombination"][20],
-            '13': json_data["winningCombination"][21],
-            '14': json_data["winningCombination"][22],
-            '15': json_data["winningCombination"][23],
-            '16': json_data["winningCombination"][24],
-            '17': json_data["winningCombination"][25],
-            '18': json_data["winningCombination"][26],
-            '19': json_data["winningCombination"][27],
-            '20': json_data["winningCombination"][28],
+            '1': int(numbers[0]),
+            '2': int(numbers[1]),
+            '3': int(numbers[2]),
+            '4': int(numbers[3]),
+            '5': int(numbers[4]),
+            '6': int(numbers[5]),
+            '7': int(numbers[6]),
+            '8': int(numbers[7]),
+            '9': int(numbers[8]),
+            '10': int(numbers[9]),
+            '11': int(numbers[10]),
+            '12': int(numbers[11]),
+            '13': int(numbers[12]),
+            '14': int(numbers[13]),
+            '15': int(numbers[14]),
+            '16': int(numbers[15]),
+            '17': int(numbers[16]),
+            '18': int(numbers[17]),
+            '19': int(numbers[18]),
+            '20': int(numbers[19]),
+
+            # '1': int(json_data["winningCombination"][9]),
+            # '2': int(json_data["winningCombination"][10]),
+            # '3': int(json_data["winningCombination"][11]),
+            # '4': int(json_data["winningCombination"][12]),
+            # '5': int(json_data["winningCombination"][13]),
+            # '6': int(json_data["winningCombination"][14]),
+            # '7': int(json_data["winningCombination"][15]),
+            # '8': int(json_data["winningCombination"][16]),
+            # '9': int(json_data["winningCombination"][17]),
+            # '10': int(json_data["winningCombination"][18]),
+            # '11': int(json_data["winningCombination"][19]),
+            # '12': int(json_data["winningCombination"][20]),
+            # '13': int(json_data["winningCombination"][21]),
+            # '14': int(json_data["winningCombination"][22]),
+            # '15': int(json_data["winningCombination"][23]),
+            # '16': int(json_data["winningCombination"][24]),
+            # '17': int(json_data["winningCombination"][25]),
+            # '18': int(json_data["winningCombination"][26]),
+            # '19': int(json_data["winningCombination"][27]),
+            # '20': int(json_data["winningCombination"][28]),
         })
     # time.sleep(1)
 print(f'Данные с {date_range[0]} по {date_range[-1]} собраны')
 # запись в эксель
 dataframe = pd.DataFrame(data)
+# делае сортировку по тиражу
+sort_df = dataframe.sort_values(by='Тираж')
+# print(sort_df)
 writer = ExcelWriter(f"Результат игр с {date_range[0]} по {date_range[-1]}.xlsx")
-dataframe.to_excel(writer, 'data', index=False)
+sort_df.to_excel(writer, 'data', index=False)
 writer.save()
 print(f'Итоговый файл: "Результат игр с {date_range[0]} по {date_range[-1]}.xlsx"')
 print(f'Собранно тиражей: {len(data)}')
