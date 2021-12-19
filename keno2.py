@@ -9,12 +9,11 @@ url = "https://www.stoloto.ru/p/api/mobile/api/v34/service/draws/archive"
 # дата в формате месяц/день/год
 # date_range = pd.period_range(start="9/29/2021", end="12/6/2021", freq="D")
 # date_range = pd.period_range("10/15/2021", "11/11/2021", freq="D")
-date_range = pd.period_range(start="18/12/2021", end="18/12/2021", freq="D")
+date_range = pd.period_range(start="18/12/2021", end="19/12/2021", freq="D")
 data = []
 for date in date_range:
     print(f'Сбор данных на {date}...')
-    querystring = {"count": "50", "game": "keno2", "date_from": f"{date}", "date_to": f"{date}",
-                   "superprize": "false", "second_prize": "false"}
+    querystring = {"count": "50", "game": "keno2", "date_from": f"{date}", "date_to": f"{date}"}
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0",
         "Accept": "application/json, text/plain, */*",

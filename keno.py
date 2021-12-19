@@ -27,7 +27,7 @@ def get_content():
         # вводим период в формате (год, месяц, день)
 
         date_range = pd.date_range(start=datetime(2011, 10, 5), end=datetime(2015, 8, 1), freq='D')
-        date_range = pd.date_range(start=datetime(2015, 8, 1), end=datetime(2021, 9, 28), freq='D')
+        date_range = pd.date_range(start=datetime(2021, 9, 20), end=datetime(2021, 9, 28), freq='D')
         # date_range = pd.date_range(start=datetime(2015, 8, 1), end=datetime(2015, 8, 1), freq='D')
 
         start = datetime.strftime(date_range[0], '%d.%m.%Y')
