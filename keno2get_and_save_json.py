@@ -3,7 +3,7 @@ import requests
 
 url = "https://www.stoloto.ru/p/api/mobile/api/v34/service/draws/archive"
 
-querystring = {"count": "10", "game": "keno2", "date_from": "2021-12-04", "date_to": "2021-12-04"}
+querystring = {"count": "50", "game": "keno2", "date_from": "2021-12-04", "date_to": "2021-12-04"}
 
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:92.0) Gecko/20100101 Firefox/92.0",
@@ -22,13 +22,13 @@ headers = {
 }
 
 response = requests.get(url, headers=headers, params=querystring)
-
 data_json = response.json()
 
 print('Дата проведения тиража: ', data_json["draws"][0]["date"])
 print('Номер тиража: ', data_json["draws"][0]["number"])
 print('Выпавшие числа тиража: ', data_json["draws"][0]["winningCombination"])
 print('Выплата: ', data_json["draws"][0]["summPayed"])
+print(len(data_json["draws"]))
 
 with open('data.json', 'w', encoding='utf-8') as file:
     json.dump(data_json, file, indent=2, ensure_ascii=False)
