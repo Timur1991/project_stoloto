@@ -1,15 +1,15 @@
 import requests
-import pandas as pd
+import pandas
 import time
 from pandas import ExcelWriter
 from datetime import datetime
 
-url = "https://www.stoloto.ru/p/api/mobile/api/v34/service/draws/archive"
+url = "https://www.stoloto.ru/p/api/mobile/api/v35/service/draws/archive"
 
 # дата в формате месяц/день/год
 # date_range = pd.period_range(start="9/29/2021", end="12/6/2021", freq="D")
 # date_range = pd.period_range("10/15/2021", "11/11/2021", freq="D")
-date_range = pd.period_range(start="18/12/2021", end="19/12/2021", freq="D")
+date_range = pandas.period_range(start="02/01/2024", end="02/12/2024", freq="D")  # дата в формате месяц/день/год
 data = []
 for date in date_range:
     print(f'Сбор данных на {date}...')
@@ -29,14 +29,12 @@ for date in date_range:
         "Sec-Fetch-Site": "same-origin",
         "TE": "trailers"
     }
-    response = requests.request("GET", url, headers=headers, params=querystring)
+    response = requests.get(url=url, headers=headers, params=querystring)
     datas_json = response.json()
     for json_data in datas_json["draws"]:
         # находим дату тиража
-
         date = datetime.strptime(json_data["date"].split('T')[0], '%Y-%m-%d')
         # print(json_data["date"])
-
         # находим выпавшие числа тиража и сортируем их по возрастанию
         numbers = json_data["winningCombination"][9:29]
         numbers.sort()
@@ -66,37 +64,14 @@ for date in date_range:
             '18': int(numbers[17]),
             '19': int(numbers[18]),
             '20': int(numbers[19]),
-
-            # '1': int(json_data["winningCombination"][9]),
-            # '2': int(json_data["winningCombination"][10]),
-            # '3': int(json_data["winningCombination"][11]),
-            # '4': int(json_data["winningCombination"][12]),
-            # '5': int(json_data["winningCombination"][13]),
-            # '6': int(json_data["winningCombination"][14]),
-            # '7': int(json_data["winningCombination"][15]),
-            # '8': int(json_data["winningCombination"][16]),
-            # '9': int(json_data["winningCombination"][17]),
-            # '10': int(json_data["winningCombination"][18]),
-            # '11': int(json_data["winningCombination"][19]),
-            # '12': int(json_data["winningCombination"][20]),
-            # '13': int(json_data["winningCombination"][21]),
-            # '14': int(json_data["winningCombination"][22]),
-            # '15': int(json_data["winningCombination"][23]),
-            # '16': int(json_data["winningCombination"][24]),
-            # '17': int(json_data["winningCombination"][25]),
-            # '18': int(json_data["winningCombination"][26]),
-            # '19': int(json_data["winningCombination"][27]),
-            # '20': int(json_data["winningCombination"][28]),
         })
-    # time.sleep(1)
 print(f'Данные с {date_range[0]} по {date_range[-1]} собраны')
 # запись в эксель
-dataframe = pd.DataFrame(data)
+dataframe = pandas.DataFrame(data)
 # делае сортировку по тиражу
 sort_df = dataframe.sort_values(by='Тираж')
-# print(sort_df)
 writer = ExcelWriter(f"Результат игр с {date_range[0]} по {date_range[-1]}.xlsx")
-sort_df.to_excel(writer, 'data', index=False)
-writer.save()
+sort_df.to_excel(writer, sheet_name='data', index=False)
+writer.close()
 print(f'Итоговый файл: "Результат игр с {date_range[0]} по {date_range[-1]}.xlsx"')
 print(f'Собранно тиражей: {len(data)}')
